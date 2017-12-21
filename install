@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# depends git
+# depends yarn
+
+sudo apt-get install xclip
+
+# Scaffolding
+mkdir -p ~/.cache/configuration
+
+brew install yarn
+yarn global add grunt-cli
+
+sudo apt-get install default-jdk
+echo "deb https://dl.bintray.com/sbt/debian /" | sudo tee -a /etc/apt/sources.list.d/sbt.list
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89B84B2DF73499E82A75642AC823
+sudo apt-get update
+sudo apt-get install sbt
+
+
+
+
+# Building workspace
+# ------------------
+
+WORKSPACE_PATH=$HOME/Documents/src/workspace
+
+# Creating directory
+mkdir -p $WORKSPACE_PATH
+
+# Retrieving sources
+
+if [ ! -f $HOME/.ssh/id_rsa ]; then
+    ssh-keygen -t rsa -f $HOME/.ssh/id_rsa -q -P ""
+    # TODO copy public key to clipboard with xclip and prompt user to go on
+    # cat ~/.ssh/id_rsa.pub | xclip -i -sel clipboard
+fi
+
+source $HOME/.workspace-install
+git clone $WORKSPACE_GIT_URL $WORKSPACE_PATH
+cd $WORKSPACE_PATH
+git submodule update --init --recursive
+cd -
+
