@@ -36,6 +36,7 @@ if [ ! -f $HOME/.ssh/id_rsa ]; then
     # cat ~/.ssh/id_rsa.pub | xclip -i -sel clipboard
 fi
 
+# TODO Prompt user to create this file
 source $HOME/.workspace-install
 git clone $WORKSPACE_GIT_URL $WORKSPACE_PATH
 cd $WORKSPACE_PATH
