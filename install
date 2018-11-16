@@ -3,19 +3,45 @@
 # depends git
 # depends yarn
 
-sudo apt-get install xclip
+# shellcheck disable=SC1090
+source "$SHEF_PATH/share/functions"
+
+_shef_apt_package_is_installed() {
+    local COMMAND=$1
+
+    if dpkg -s "$COMMAND" > /dev/null 2>&1; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+shef apt xclip
 
 # Scaffolding
 mkdir -p ~/.cache/configuration
 
-brew install yarn
-yarn global add grunt-cli
+shef brew yarn
 
-sudo apt-get install default-jdk
-echo "deb https://dl.bintray.com/sbt/debian /" | sudo tee -a /etc/apt/sources.list.d/sbt.list
-sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89B84B2DF73499E82A75642AC823
-sudo apt-get update
-sudo apt-get install sbt
+if ! shef_is_installed grunt; then
+    yarn global add grunt-cli
+fi
+
+if ! _shef_apt_package_is_installed default-jdk; then
+    sudo apt-get install default-jdk
+fi
+
+if ! _shef_apt_package_is_installed sbt; then
+  DEBIAN_REPOSITORY=https://dl.bintray.com/sbt/debian
+  if ! grep -h "^deb.*$DEBIAN_REPOSITORY" /etc/apt/sources.list.d/* > /dev/null 2>&1; then
+    echo "deb https://dl.bintray.com/sbt/debian /" | sudo tee -a /etc/apt/sources.list.d/sbt.list
+    sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 2EE0EA64E40A89B84B2DF73499E82A75642AC823
+  else
+    echo "Sbt debian repository already added"
+  fi
+  sudo apt-get update
+  shef apt install sbt
+fi
 
 
 
@@ -26,20 +52,24 @@ sudo apt-get install sbt
 WORKSPACE_PATH=$HOME/Documents/src/workspace
 
 # Creating directory
-mkdir -p $WORKSPACE_PATH
+mkdir -p "$WORKSPACE_PATH"
 
 # Retrieving sources
 
-if [ ! -f $HOME/.ssh/id_rsa ]; then
-    ssh-keygen -t rsa -f $HOME/.ssh/id_rsa -q -P ""
+if [ ! -f "$HOME/.ssh/id_rsa" ]; then
+    ssh-keygen -t rsa -f "$HOME/.ssh/id_rsa" -q -P ""
     # TODO copy public key to clipboard with xclip and prompt user to go on
     # cat ~/.ssh/id_rsa.pub | xclip -i -sel clipboard
 fi
 
-# TODO Prompt user to create this file
-source $HOME/.workspace-install
-git clone $WORKSPACE_GIT_URL $WORKSPACE_PATH
-cd $WORKSPACE_PATH
-git submodule update --init --recursive
-cd -
+source "$HOME/.workspace-install"
 
+if [ ! -d "$WORKSPACE_PATH" ]; then
+    git clone "$WORKSPACE_GIT_URL" "$WORKSPACE_PATH"
+    cd "$WORKSPACE_PATH" || exit 1
+    git submodule update --init --recursive
+    cd - || exit 1
+fi
+
+# Install graphviz
+# Install graph-composer
