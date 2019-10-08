@@ -18,7 +18,7 @@ shef apt --package sbt --repository "deb https://dl.bintray.com/sbt/debian /"
 # Building workspace
 # ------------------
 
-WORKSPACE_PATH=$HOME/Documents/src/workspace
+WORKSPACE_PATH=$HOME/Projects
 if [ ! -d "$WORKSPACE_PATH" ]; then
     mkdir -p "$WORKSPACE_PATH"
 fi
