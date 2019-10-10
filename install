@@ -9,6 +9,7 @@ shef apt xclip
 mkdir -p ~/.cache/configuration
 
 shef brew yarn
+shef brew bat
 
 shef npm grunt-cli
 
