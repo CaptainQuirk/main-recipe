@@ -12,6 +12,13 @@ commandTests:
   - name: 'Installs bat'
     command: 'which'
     args: ['bat']
+  - name: 'Installs shellcheck'
+    command: 'which'
+    args: ['shellcheck']
+  - name: 'Installs hadolint'
+    command: 'which'
+    args: ['hadolint']
+
 fileExistenceTests:
   - name: 'Creates the workspace directory'
     path: /home/linuxbrew/Projects
