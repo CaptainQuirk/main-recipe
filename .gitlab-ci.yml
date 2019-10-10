@@ -18,6 +18,3 @@ Build Docker image:
   script:
     - make build
     - make test-acceptance
-
-
-
